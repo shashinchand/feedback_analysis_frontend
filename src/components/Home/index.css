@@ -1,0 +1,270 @@
+.home-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.header {
+  background-color: white;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo-container {
+  display: flex;
+  margin-left: 1rem;
+  gap: 2rem;  /* Increased from 1rem to 2rem */
+}
+
+.logo {
+  height: 60px;
+  margin-right: 1rem;  /* Added additional spacing */
+}
+
+.header-text h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.header-text p {
+  margin: 0;
+  color: #666;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.portal-title {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.institution {
+  color: #666;
+  font-weight: normal;
+  margin-bottom: 1rem;
+}
+
+.portal-description {
+  color: #666;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+}
+
+.start-analysis-btn, .manage-questions-btn {
+  background-color: #1a237e;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 0 0.5rem 0;
+}
+
+.start-analysis-btn:hover, .manage-questions-btn:hover {
+  background-color: #0d147b;
+}
+
+.manage-questions-btn {
+  background-color: #4a148c;
+}
+
+.manage-questions-btn:hover {
+  background-color: #3a1078;
+}
+
+.features-section {
+  margin-top: 2rem;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.feature-card {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.feature-card h3 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.feature-card p {
+  color: #666;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.file-upload-btn {
+  background-color: #1a237e;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+  display: inline-block;
+}
+
+.file-upload-btn:hover {
+  background-color: #0d147b;
+}
+
+.file-upload-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.file-input {
+  width: 100%;
+  max-width: 300px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.file-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.selected-file {
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  color: #666;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.upload-button {
+  background-color: #1a237e;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.upload-button.loading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.upload-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  border: 3px solid rgba(255,255,255,.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.upload-message {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.upload-message.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.upload-message.error {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+/* Add these styles and keep your existing styles */
+
+.upload-button-container {
+  background-color: #1a237e;
+  color: white;
+  padding: 1rem 2rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s;
+  display: inline-block;
+}
+
+.upload-button-container:hover {
+  background-color: #0d147b;
+}
+
+.button-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Make it responsive */
+@media (min-width: 768px) {
+  .action-buttons {
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+  }
+}
