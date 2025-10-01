@@ -4,6 +4,7 @@ import './App.css';
 import Home from './components/Home';
 import Analysis from './components/Analysis';
 import QuestionsPattern from './components/questions_pattern';
+import AnalysisResults from './components/AnalysisResults';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/analysis" element={<Analysis />} />
           <Route path="/questions" element={<QuestionsPattern />} />
+          <Route path="/analysis-results" element={<AnalysisResults />} />
         </Routes>
       </div>
     </Router>

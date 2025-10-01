@@ -7,7 +7,15 @@ const QuestionPattern = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [formErrors, setFormErrors] = useState({});
-  const [sections, setSections] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingQuestionId, setEditingQuestionId] = useState(null);
+  
+  // Fixed section types
+  const SECTION_TYPES = [
+    'TEACHING EFFECTIVENESS',
+    'CLASSROOM DYNAMICS AND ENGAGEMENT',
+    'ASSESSMENT AND FEEDBACK'
+  ];
   
   // New question form state
   const [newQuestion, setNewQuestion] = useState({
@@ -28,38 +36,29 @@ const QuestionPattern = () => {
       const questionsResponse = await fetch('http://localhost:5000/api/questions/with-options');
 
       if (!questionsResponse.ok) {
-        throw new Error('Failed to fetch data');
+        const errorData = await questionsResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch questions');
       }
 
       const questionsData = await questionsResponse.json();
+      if (!Array.isArray(questionsData)) {
+        throw new Error('Invalid response format from server');
+      }
+      
+      console.log('Fetched questions:', questionsData);
       setQuestions(questionsData);
+      setError(null); // Clear any existing errors
     } catch (error) {
-      console.error('Error fetching data:', error);
-      setError('Failed to load questions. Please refresh the page.');
+      console.error('Error fetching questions:', error);
+      setError(error.message || 'Failed to load questions. Please refresh the page.');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Fetch section types
-  const fetchSections = useCallback(async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/questions/sections');
-      if (!response.ok) {
-        throw new Error('Failed to fetch sections');
-      }
-      const data = await response.json();
-      setSections(data);
-    } catch (error) {
-      console.error('Error fetching sections:', error);
-      setError('Failed to load section types');
-    }
-  }, []);
-
   useEffect(() => {
     fetchQuestions();
-    fetchSections();
-  }, [fetchQuestions, fetchSections, success]);
+  }, [fetchQuestions, success]);
   
   // Handle question form change
   const handleQuestionChange = (e) => {
@@ -136,6 +135,37 @@ const QuestionPattern = () => {
     return Object.keys(errors).length === 0;
   };
   
+  // Handle edit button click
+  const handleEditClick = (question) => {
+    console.log('Editing question:', question);
+    setEditingQuestionId(question.id);
+    setIsEditing(true);
+    setNewQuestion({
+      section_type: question.section_type,
+      question: question.question,
+      column_name: question.column_name
+    });
+    if (question.options && Array.isArray(question.options)) {
+      setOptions(question.options.map(opt => ({
+        option_label: opt.option_label,
+        option_text: opt.option_text
+      })));
+    }
+  };
+
+  // Handle cancel edit
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingQuestionId(null);
+    setNewQuestion({
+      section_type: '',
+      question: '',
+      column_name: ''
+    });
+    setOptions([{ option_label: 'A', option_text: '' }]);
+    setFormErrors({});
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -147,9 +177,17 @@ const QuestionPattern = () => {
     try {
       setLoading(true);
       
-      // First, create the question
-      const questionResponse = await fetch('http://localhost:5000/api/questions', {
-        method: 'POST',
+      // Create or update the question
+      const endpoint = isEditing 
+        ? `http://localhost:5000/api/questions/${editingQuestionId}`
+        : 'http://localhost:5000/api/questions';
+      
+      console.log('Submitting to endpoint:', endpoint);
+      console.log('Question data:', newQuestion);
+      
+      const method = isEditing ? 'PUT' : 'POST';
+      const questionResponse = await fetch(endpoint, {
+        method: isEditing ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -161,13 +199,14 @@ const QuestionPattern = () => {
       });
       
       if (!questionResponse.ok) {
-        throw new Error('Failed to create question');
+        const errorData = await questionResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to ${isEditing ? 'update' : 'create'} question`);
       }
       
       const questionData = await questionResponse.json();
       
       if (!questionData.success) {
-        throw new Error(questionData.error || 'Failed to create question');
+        throw new Error(questionData.error || `Failed to ${isEditing ? 'update' : 'create'} question`);
       }
       
       // Check if data exists and has the expected structure
@@ -179,17 +218,20 @@ const QuestionPattern = () => {
       const questionId = questionData.data[0].id;
       console.log('Created question with ID:', questionId);
       
-      // Then create all options for this question
+      // Handle options update/creation
+      const optionsEndpoint = isEditing
+        ? `http://localhost:5000/api/questions/${editingQuestionId}/options`
+        : 'http://localhost:5000/api/questions/options';
+
       const optionsWithQuestionId = options.map(option => ({
         ...option,
-        question_id: questionId
+        question_id: isEditing ? editingQuestionId : questionId
       }));
       
-      // Log the options data being sent to the server
       console.log('Sending options data:', optionsWithQuestionId);
       
-      const optionsResponse = await fetch('http://localhost:5000/api/questions/options', {
-        method: 'POST',
+      const optionsResponse = await fetch(optionsEndpoint, {
+        method: isEditing ? 'PUT' : 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -197,13 +239,15 @@ const QuestionPattern = () => {
       });
       
       if (!optionsResponse.ok) {
-        throw new Error('Failed to create options');
+        const errorData = await optionsResponse.json().catch(() => ({}));
+        throw new Error(errorData.error || `Failed to ${isEditing ? 'update' : 'create'} options`);
       }
       
       const optionsData = await optionsResponse.json();
+      console.log('Options response:', optionsData);
       
       if (!optionsData.success) {
-        throw new Error(optionsData.error || 'Failed to create options');
+        throw new Error(optionsData.error || `Failed to ${isEditing ? 'update' : 'create'} options`);
       }
       
       // Reset form and show success
@@ -218,10 +262,14 @@ const QuestionPattern = () => {
       ]);
       
       setSuccess(true);
+      setIsEditing(false);
+      setEditingQuestionId(null);
       setTimeout(() => setSuccess(false), 3000);
       
       // Refresh questions list
-      fetchQuestions();
+      await fetchQuestions();
+      
+      console.log('Update completed successfully');
     } catch (error) {
       console.error('Error adding question:', error);
       setError(error.message || 'Failed to add question. Please try again.');
@@ -274,20 +322,20 @@ const QuestionPattern = () => {
             <div className="form-row">
               <div className="form-group">
                 <label htmlFor="section_type">Section Type</label>
-                <input
-                  type="text"
+                <select
                   id="section_type"
                   name="section_type"
                   value={newQuestion.section_type}
                   onChange={handleQuestionChange}
-                  placeholder="e.g., Teaching Quality, Course Content"
-                  list="section-list"
-                />
-                <datalist id="section-list">
-                  {sections.map((section, index) => (
-                    <option key={index} value={section} />
+                  className="form-select"
+                >
+                  <option value="">Select a section type</option>
+                  {SECTION_TYPES.map((section, index) => (
+                    <option key={index} value={section}>
+                      {section}
+                    </option>
                   ))}
-                </datalist>
+                </select>
                 {formErrors.section_type && <div className="error-message">{formErrors.section_type}</div>}
               </div>
             </div>
@@ -371,9 +419,20 @@ const QuestionPattern = () => {
               </button>
             </div>
             
-            <button type="submit" className="submit-button" disabled={loading}>
-              {loading ? 'Saving...' : 'Save Question'}
-            </button>
+            <div className="button-group">
+              <button type="submit" className="submit-button" disabled={loading}>
+                {loading ? 'Saving...' : isEditing ? 'Update Question' : 'Save Question'}
+              </button>
+              {isEditing && (
+                <button 
+                  type="button" 
+                  className="cancel-button" 
+                  onClick={handleCancelEdit}
+                >
+                  Cancel Editing
+                </button>
+              )}
+            </div>
           </form>
         </div>
         
@@ -388,6 +447,13 @@ const QuestionPattern = () => {
                   <div className="question-card-header">
                     <span className="section-badge">{question.section_type}</span>
                     <span className="column-badge">{question.column_name}</span>
+                    <button 
+                      type="button"
+                      className="edit-button"
+                      onClick={() => handleEditClick(question)}
+                    >
+                      Edit
+                    </button>
                   </div>
                   <div className="question-card-body">
                     <p>{question.question}</p>

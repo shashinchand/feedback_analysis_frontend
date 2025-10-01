@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './index.css';
 
 const Analysis = () => {
+    const navigate = useNavigate();
     const [filters, setFilters] = useState({
         degree: '',
         department: '',
@@ -18,6 +20,7 @@ const Analysis = () => {
 
     const [faculty, setFaculty] = useState([]);
     const [staffIdSearch, setStaffIdSearch] = useState('');
+    const [loadingAnalysis, setLoadingAnalysis] = useState(false);
 
     const getInitials = (fullName) => {
         if (!fullName || typeof fullName !== 'string') return '?';
@@ -28,9 +31,39 @@ const Analysis = () => {
         return initials || '?';
     };
 
-    // Fetch initial degree options
+    // Fetch initial degree options and restore state
     useEffect(() => {
         fetchDegrees();
+        
+        // Restore previous state if returning from results page
+        const savedFilters = sessionStorage.getItem('analysisFilters');
+        const savedFaculty = sessionStorage.getItem('savedFaculty');
+        const savedStaffIdSearch = sessionStorage.getItem('savedStaffIdSearch');
+        
+        if (savedFilters) {
+            try {
+                const filters = JSON.parse(savedFilters);
+                setFilters(filters);
+                
+                // Restore faculty data if available
+                if (savedFaculty) {
+                    const faculty = JSON.parse(savedFaculty);
+                    setFaculty(faculty);
+                }
+                
+                // Restore staff ID search if available
+                if (savedStaffIdSearch) {
+                    setStaffIdSearch(savedStaffIdSearch);
+                }
+                
+                // Clear saved data after restoring
+                sessionStorage.removeItem('analysisFilters');
+                sessionStorage.removeItem('savedFaculty');
+                sessionStorage.removeItem('savedStaffIdSearch');
+            } catch (error) {
+                console.error('Error restoring analysis state:', error);
+            }
+        }
     }, []);
 
     // Fetch departments when degree changes
@@ -124,6 +157,188 @@ const Analysis = () => {
         } catch (error) {
             console.error('Error fetching faculty:', error);
             setFaculty([]);
+        }
+    };
+
+    const generateBulkReport = async () => {
+        try {
+            setLoadingAnalysis(true);
+            const allAnalysisData = [];
+
+            // Collect analysis data for all faculty
+            for (const facultyMember of faculty) {
+                const params = new URLSearchParams({
+                    degree: filters.degree,
+                    dept: filters.department,
+                    batch: filters.batch,
+                    course: filters.course,
+                    staffId: facultyMember.staff_id || facultyMember.staffid || ''
+                });
+                
+                // Get analysis data
+                const analysisResponse = await fetch(`http://localhost:5000/api/analysis/feedback?${params.toString()}`);
+                const analysisData = await analysisResponse.json();
+                
+                if (analysisData.success) {
+                    allAnalysisData.push({
+                        analysisData: analysisData,
+                        facultyData: facultyMember
+                    });
+                }
+            }
+
+            // Generate consolidated report
+            const reportResponse = await fetch('http://localhost:5000/api/reports/generate-bulk-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    facultyAnalyses: allAnalysisData,
+                    filters: {
+                        degree: filters.degree,
+                        department: filters.department,
+                        batch: filters.batch,
+                        course: filters.course
+                    }
+                }),
+            });
+
+            if (!reportResponse.ok) {
+                throw new Error('Failed to generate report');
+            }
+
+            // Download the report
+            const blob = await reportResponse.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `faculty_feedback_analysis_${filters.department}_${filters.course}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            return true;
+        } catch (error) {
+            console.error('Error generating report:', error);
+            return false;
+        }
+    };
+
+    const handleGenerateAllReports = async () => {
+        if (!faculty.length) {
+            alert('No faculty members found to generate reports.');
+            return;
+        }
+
+        if (!window.confirm(`Are you sure you want to generate a consolidated report for all ${faculty.length} faculty members?`)) {
+            return;
+        }
+
+        try {
+            setLoadingAnalysis(true);
+            const allAnalysisData = [];
+
+            // Collect analysis data for all faculty
+            for (const facultyMember of faculty) {
+                const params = new URLSearchParams({
+                    degree: filters.degree,
+                    dept: filters.department,
+                    batch: filters.batch,
+                    course: filters.course,
+                    staffId: facultyMember.staff_id || facultyMember.staffid || ''
+                });
+                
+                // Get analysis data
+                const analysisResponse = await fetch(`http://localhost:5000/api/analysis/feedback?${params.toString()}`);
+                const analysisData = await analysisResponse.json();
+                
+                if (analysisData.success) {
+                    allAnalysisData.push({
+                        analysisData: analysisData,
+                        facultyData: facultyMember
+                    });
+                }
+            }
+
+            // Generate consolidated report
+            const reportResponse = await fetch('http://localhost:5000/api/bulk-reports/generate-bulk-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    facultyAnalyses: allAnalysisData,
+                    filters: {
+                        degree: filters.degree,
+                        department: filters.department,
+                        batch: filters.batch,
+                        course: filters.course
+                    }
+                }),
+            });
+
+            if (!reportResponse.ok) {
+                throw new Error('Failed to generate consolidated report');
+            }
+
+            // Download the report
+            const blob = await reportResponse.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `faculty_feedback_analysis_${filters.department}_${filters.course}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            alert('Consolidated report generated successfully!');
+        } catch (error) {
+            console.error('Error generating consolidated report:', error);
+            alert('Error generating consolidated report. Please try again.');
+        } finally {
+            setLoadingAnalysis(false);
+        }
+    };
+
+    const handleFacultyCardClick = async (facultyData) => {
+        setLoadingAnalysis(true);
+        
+        try {
+            // Save current state before navigating
+            sessionStorage.setItem('analysisFilters', JSON.stringify(filters));
+            sessionStorage.setItem('savedFaculty', JSON.stringify(faculty));
+            sessionStorage.setItem('savedStaffIdSearch', staffIdSearch);
+            
+            const params = new URLSearchParams({
+                degree: filters.degree,
+                dept: filters.department,
+                batch: filters.batch,
+                course: filters.course,
+                staffId: facultyData.staff_id || facultyData.staffid || ''
+            });
+            
+            const response = await fetch(`http://localhost:5000/api/analysis/feedback?${params.toString()}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                // Store analysis data and faculty data for the results page
+                sessionStorage.setItem('analysisResults', JSON.stringify(data));
+                sessionStorage.setItem('facultyData', JSON.stringify(facultyData));
+                
+                // Navigate to analysis results page
+                navigate('/analysis-results');
+            } else {
+                console.error('Analysis failed:', data.message);
+                alert('Failed to fetch analysis data: ' + (data.message || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error fetching analysis:', error);
+            alert('Error fetching analysis data. Please try again.');
+        } finally {
+            setLoadingAnalysis(false);
         }
     };
 
@@ -229,14 +444,30 @@ const Analysis = () => {
 
                 {filters.course && (
                     <div className="faculty-section">
-                        <div className="faculty-search">
-                            <label>Search by Staff ID</label>
-                            <input
-                                type="text"
-                                placeholder="Enter staff_id..."
-                                value={staffIdSearch}
-                                onChange={(e) => setStaffIdSearch(e.target.value)}
-                            />
+                        <div className="faculty-header">
+                            <div className="faculty-search">
+                                <label>Search by Staff ID</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter staff_id..."
+                                    value={staffIdSearch}
+                                    onChange={(e) => setStaffIdSearch(e.target.value)}
+                                />
+                            </div>
+                            {faculty.length > 0 && (
+                                <button 
+                                    className="generate-all-btn"
+                                    onClick={handleGenerateAllReports}
+                                    disabled={loadingAnalysis}
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    Generate Reports for All Faculty
+                                </button>
+                            )}
                         </div>
 
                         <div className="faculty-grid">
@@ -244,11 +475,15 @@ const Analysis = () => {
                                 <p>No faculty found.</p>
                             ) : (
                                 faculty.map((fac, idx) => (
-                                    <div key={`${fac.staff_id || fac.staffid}-${idx}`} className="faculty-card">
+                                    <div 
+                                        key={`${fac.staff_id || fac.staffid}-${idx}`} 
+                                        className="faculty-card clickable-card"
+                                        onClick={() => handleFacultyCardClick(fac)}
+                                    >
                                         <div className="faculty-card-header">
-                                            <div className="faculty-avatar" aria-hidden="true">{getInitials(fac.faculty_name)}</div>
+                                            <div className="faculty-avatar" aria-hidden="true">{getInitials(fac.faculty_name || fac.name)}</div>
                                             <div className="faculty-header-info">
-                                                <div className="faculty-name">{fac.faculty_name || 'Unknown'}</div>
+                                                <div className="faculty-name">{fac.faculty_name || fac.name || 'Unknown'}</div>
                                                 <div className="faculty-sub">
                                                     <strong>{filters.degree || '-'}</strong> · {filters.department || '-'} · Batch {filters.batch || '-'}
                                                 </div>
@@ -297,7 +532,8 @@ const Analysis = () => {
                                                 type="button"
                                                 className="copy-btn"
                                                 title="Copy faculty ID to clipboard"
-                                                onClick={() => {
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Prevent card click
                                                     const value = fac.staff_id || fac.staffid || '';
                                                     if (navigator && navigator.clipboard && value) {
                                                         navigator.clipboard.writeText(value)
@@ -319,6 +555,16 @@ const Analysis = () => {
                                     </div>
                                 ))
                             )}
+                        </div>
+                    </div>
+                )}
+
+                {/* Loading overlay for analysis */}
+                {loadingAnalysis && (
+                    <div className="analysis-loading-overlay">
+                        <div className="loading-spinner">
+                            <div className="spinner"></div>
+                            <p>Fetching analysis data...</p>
                         </div>
                     </div>
                 )}
