@@ -748,3 +748,419 @@ body {
         text-align: center;
     }
 }
+
+/* Comments Analysis Section */
+.comments-analysis-section {
+    background: var(--card-background);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin-top: 2rem;
+    border: 1px solid rgba(26,35,126,0.1);
+}
+
+.comments-analysis-section h2 {
+    margin: 0 0 2rem 0;
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+}
+
+.comments-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.comments-stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(26,35,126,0.05) 0%, rgba(57,73,171,0.05) 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(26,35,126,0.1);
+    min-width: 150px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.loading-comments {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(26,35,126,0.05);
+    border-radius: 8px;
+    color: var(--text-secondary);
+}
+
+.spinner-small {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(26,35,126,0.1);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.sentiment-analysis h3 {
+    margin: 0 0 2rem 0;
+    color: var(--primary-color);
+    font-size: 1.4rem;
+    font-weight: 700;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+}
+
+.sentiment-analysis h4 {
+    margin: 1.5rem 0 1rem 0;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Overall Sentiment Badge */
+.overall-sentiment {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.sentiment-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(26,35,126,0.05) 0%, rgba(57,73,171,0.05) 100%);
+    border-radius: 16px;
+    border: 2px solid rgba(26,35,126,0.1);
+    min-width: 200px;
+}
+
+.sentiment-badge .sentiment-label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.sentiment-badge .sentiment-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sentiment-badge .sentiment-value.positive {
+    background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.sentiment-badge .sentiment-value.negative {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+}
+
+.sentiment-badge .sentiment-value.neutral {
+    background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+}
+
+/* Sentiment Distribution */
+.sentiment-distribution {
+    margin-bottom: 2rem;
+}
+
+.distribution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.distribution-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.5rem 1rem;
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.distribution-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.distribution-item.positive {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(76, 175, 80, 0.05) 100%);
+    border-color: rgba(76, 175, 80, 0.2);
+}
+
+.distribution-item.neutral {
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+    border-color: rgba(255, 152, 0, 0.2);
+}
+
+.distribution-item.negative {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.1) 0%, rgba(244, 67, 54, 0.05) 100%);
+    border-color: rgba(244, 67, 54, 0.2);
+}
+
+.distribution-item .percentage {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+}
+
+.distribution-item.positive .percentage {
+    color: #4caf50;
+}
+
+.distribution-item.neutral .percentage {
+    color: #ff9800;
+}
+
+.distribution-item.negative .percentage {
+    color: #f44336;
+}
+
+.distribution-item .label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.distribution-item .count {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Insights and Recommendations */
+.insights-section,
+.recommendations-section {
+    margin-bottom: 2rem;
+    background: rgba(26,35,126,0.02);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(26,35,126,0.1);
+}
+
+.insights-list,
+.recommendations-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.insight-item,
+.recommendation-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(26,35,126,0.1);
+}
+
+.insight-item:last-child,
+.recommendation-item:last-child {
+    border-bottom: none;
+}
+
+.insight-icon,
+.recommendation-icon {
+    font-size: 1.2rem;
+    margin-top: 0.1rem;
+    flex-shrink: 0;
+}
+
+.insight-item {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.recommendation-item {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Negative Summary */
+.negative-summary {
+    background: linear-gradient(135deg, rgba(244, 67, 54, 0.05) 0%, rgba(244, 67, 54, 0.02) 100%);
+    border: 1px solid rgba(244, 67, 54, 0.1);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.negative-summary h4 {
+    color: #d32f2f;
+    margin-top: 0;
+}
+
+.summary-content {
+    background: white;
+    padding: 1.25rem;
+    border-radius: 8px;
+    border: 1px solid rgba(244, 67, 54, 0.1);
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.comments-error {
+    padding: 1.5rem;
+    background: rgba(244, 67, 54, 0.05);
+    border: 1px solid rgba(244, 67, 54, 0.2);
+    border-radius: 8px;
+    color: #d32f2f;
+    text-align: center;
+}
+
+/* Responsive Design for Comments Analysis */
+@media (max-width: 768px) {
+    .comments-stats {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .distribution-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .sentiment-badge {
+        min-width: 150px;
+        padding: 1.5rem;
+    }
+    
+    .sentiment-badge .sentiment-value {
+        font-size: 1.5rem;
+    }
+}
+
+/* Negative Comments Section Styles */
+.negative-comments-section {
+    margin: 1.5rem 0;
+}
+
+.negative-comments-section h4 {
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.negative-comments-found {
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    border: 1px solid #f8bbd9;
+    border-radius: var(--border-radius-sm);
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.negative-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.negative-count {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--danger-color);
+    line-height: 1;
+}
+
+.negative-label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.negative-percentage {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    background: rgba(255,255,255,0.7);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.no-negative-comments {
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border: 1px solid #a5d6a7;
+    border-radius: var(--border-radius-sm);
+    padding: 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.no-negative-icon {
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.no-negative-message strong {
+    font-size: 1.3rem;
+    color: var(--success-color);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.no-negative-message p {
+    color: var(--text-secondary);
+    margin: 0;
+    font-size: 0.95rem;
+}
