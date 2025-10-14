@@ -39,7 +39,7 @@ const Home = () => {
                   const formData = new FormData();
                   formData.append('file', e.target.files[0]);
                   
-                  fetch('http://localhost:5000/api/upload', {
+                  fetch('https://iqac-backend-0tj0.onrender.com/api/upload', {
                     method: 'POST',
                     body: formData
                   })

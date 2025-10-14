@@ -33,7 +33,7 @@ const QuestionPattern = () => {
   const fetchQuestions = useCallback(async () => {
     try {
       setLoading(true);
-      const questionsResponse = await fetch('http://localhost:5000/api/questions/with-options');
+      const questionsResponse = await fetch('https://iqac-backend-0tj0.onrender.com/api/questions/with-options');
 
       if (!questionsResponse.ok) {
         const errorData = await questionsResponse.json().catch(() => ({}));
@@ -166,6 +166,33 @@ const QuestionPattern = () => {
     setFormErrors({});
   };
 
+  // Handle delete question
+  const handleDelete = async (questionId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this question and its options?');
+    if (!confirmDelete) return;
+    try {
+      setLoading(true);
+      const resp = await fetch(`https://iqac-backend-0tj0.onrender.com/api/questions/${questionId}`, {
+        method: 'DELETE'
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error || 'Failed to delete question');
+      }
+      const data = await resp.json();
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to delete question');
+      }
+      await fetchQuestions();
+    } catch (e) {
+      console.error('Delete error:', e);
+      setError(e.message || 'Failed to delete');
+      setTimeout(() => setError(null), 3000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -179,8 +206,8 @@ const QuestionPattern = () => {
       
       // Create or update the question
       const endpoint = isEditing 
-        ? `http://localhost:5000/api/questions/${editingQuestionId}`
-        : 'http://localhost:5000/api/questions';
+        ? `https://iqac-backend-0tj0.onrender.com/api/questions/${editingQuestionId}`
+        : 'https://iqac-backend-0tj0.onrender.com/api/questions';
       
       console.log('Submitting to endpoint:', endpoint);
       console.log('Question data:', newQuestion);
@@ -220,8 +247,8 @@ const QuestionPattern = () => {
       
       // Handle options update/creation
       const optionsEndpoint = isEditing
-        ? `http://localhost:5000/api/questions/${editingQuestionId}/options`
-        : 'http://localhost:5000/api/questions/options';
+        ? `https://iqac-backend-0tj0.onrender.com/api/questions/${editingQuestionId}/options`
+        : 'https://iqac-backend-0tj0.onrender.com/api/questions/options';
 
       const optionsWithQuestionId = options.map(option => ({
         ...option,
@@ -454,6 +481,14 @@ const QuestionPattern = () => {
                     >
                       Edit
                     </button>
+                  <button
+                    type="button"
+                    className="delete-button"
+                    onClick={() => handleDelete(question.id)}
+                    disabled={loading}
+                  >
+                    Delete
+                  </button>
                   </div>
                   <div className="question-card-body">
                     <p>{question.question}</p>

@@ -39,7 +39,7 @@ const UploadFile = () => {
                 type: file.type 
             }); // Debug log
 
-            const response = await axios.post('http://localhost:5000/api/upload', formData, {
+            const response = await axios.post('https://iqac-backend-0tj0.onrender.com/api/upload', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },

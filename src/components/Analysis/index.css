@@ -107,6 +107,33 @@
     box-shadow: 0 0 0 2px rgba(26,35,126,0.2);
 }
 
+/* Department report action */
+.dept-report-actions {
+    display: flex;
+    align-items: flex-end;
+    margin-left: auto;
+}
+
+.generate-dept-btn {
+    padding: 0.6rem 1rem;
+    background: #00897b;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    height: 38px;
+}
+
+.generate-dept-btn.alt {
+    background: #455a64;
+}
+
+.generate-dept-btn:disabled {
+    background: #b2dfdb;
+    cursor: not-allowed;
+}
+
 /* Faculty section */
 .faculty-section {
     margin-top: 1.5rem;

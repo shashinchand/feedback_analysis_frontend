@@ -132,7 +132,7 @@ const AnalysisResults = () => {
                 staffId: analysisData.staff_id || analysisData.staffId || 'NOT_FOUND'
             });
             
-            const response = await fetch(`http://localhost:5000/api/analysis/comments?${params.toString()}`);
+            const response = await fetch(`https://iqac-backend-0tj0.onrender.com/api/analysis/comments?${params.toString()}`);
             const data = await response.json();
             
             console.log('Comments analysis response:', data);
@@ -188,7 +188,7 @@ const AnalysisResults = () => {
                     })) : 'No analysis data'
             }, null, 2));
             
-            const response = await fetch('http://localhost:5000/api/reports/generate-report', {
+            const response = await fetch('https://iqac-backend-0tj0.onrender.com/api/reports/generate-report', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
