@@ -39,7 +39,7 @@ const Home = () => {
                   const formData = new FormData();
                   formData.append('file', e.target.files[0]);
                   
-                  fetch('https://feedback-analysis-backend-5os5.onrender.com/api/upload', {
+                  fetch('https://feedback-analysis-backend-1.onrender.com/api/upload', {
                     method: 'POST',
                     body: formData
                   })
