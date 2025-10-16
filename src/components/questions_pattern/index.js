@@ -33,7 +33,7 @@ const QuestionPattern = () => {
   const fetchQuestions = useCallback(async () => {
     try {
       setLoading(true);
-      const questionsResponse = await fetch('https://iqac-backend-0tj0.onrender.com/api/questions/with-options');
+      const questionsResponse = await fetch('https://feedback-analysis-backend-5os5.onrender.com/api/questions/with-options');
 
       if (!questionsResponse.ok) {
         const errorData = await questionsResponse.json().catch(() => ({}));
@@ -172,7 +172,7 @@ const QuestionPattern = () => {
     if (!confirmDelete) return;
     try {
       setLoading(true);
-      const resp = await fetch(`https://iqac-backend-0tj0.onrender.com/api/questions/${questionId}`, {
+      const resp = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/questions/${questionId}`, {
         method: 'DELETE'
       });
       if (!resp.ok) {
@@ -206,8 +206,8 @@ const QuestionPattern = () => {
       
       // Create or update the question
       const endpoint = isEditing 
-        ? `https://iqac-backend-0tj0.onrender.com/api/questions/${editingQuestionId}`
-        : 'https://iqac-backend-0tj0.onrender.com/api/questions';
+        ? `https://feedback-analysis-backend-5os5.onrender.com/${editingQuestionId}`
+        : 'https://feedback-analysis-backend-5os5.onrender.com';
       
       console.log('Submitting to endpoint:', endpoint);
       console.log('Question data:', newQuestion);
@@ -247,8 +247,8 @@ const QuestionPattern = () => {
       
       // Handle options update/creation
       const optionsEndpoint = isEditing
-        ? `https://iqac-backend-0tj0.onrender.com/api/questions/${editingQuestionId}/options`
-        : 'https://iqac-backend-0tj0.onrender.com/api/questions/options';
+        ? `https://feedback-analysis-backend-5os5.onrender.com/${editingQuestionId}/options`
+        : 'https://feedback-analysis-backend-5os5.onrender.com';
 
       const optionsWithQuestionId = options.map(option => ({
         ...option,

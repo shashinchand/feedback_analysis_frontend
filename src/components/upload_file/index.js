@@ -39,7 +39,7 @@ const UploadFile = () => {
                 type: file.type 
             }); // Debug log
 
-            const response = await axios.post('https://iqac-backend-0tj0.onrender.com/api/upload', formData, {
+            const response = await axios.post('https://feedback-analysis-backend-5os5.onrender.com', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },

@@ -41,7 +41,7 @@ const Analysis = () => {
         }
         try {
             setLoadingDeptReport(true);
-            const resp = await fetch(`https://iqac-backend-0tj0.onrender.com/api/reports/generate-department-report`, {
+            const resp = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/reports/generate-department-report`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -78,7 +78,7 @@ const Analysis = () => {
         }
         try {
             setLoadingDeptAllReport(true);
-            const resp = await fetch(`https://iqac-backend-0tj0.onrender.com/api/reports/generate-department-report-all-batches`, {
+            const resp = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/reports/generate-department-report-all-batches`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -175,7 +175,7 @@ const Analysis = () => {
     const fetchDegrees = async () => {
         try {
             console.log('Fetching degrees...');
-            const response = await fetch(`https://iqac-backend-0tj0.onrender.com/api/analysis/degrees`);
+            const response = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/analysis/degrees`);
             const data = await response.json();
             console.log('Degrees received:', data);
             if (Array.isArray(data)) {
@@ -190,7 +190,7 @@ const Analysis = () => {
 
     const fetchDepartments = async (degree) => {
         try {
-            const response = await fetch(`https://iqac-backend-0tj0.onrender.com/api/analysis/departments?degree=${degree}`);
+            const response = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/analysis/departments?degree=${degree}`);
             const data = await response.json();
             setOptions(prev => ({ ...prev, departments: data }));
         } catch (error) {
@@ -200,7 +200,7 @@ const Analysis = () => {
 
     const fetchBatches = async (degree, department) => {
         try {
-            const response = await fetch(`https://iqac-backend-0tj0.onrender.com/api/analysis/batches?degree=${degree}&dept=${department}`);
+            const response = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/analysis/batches?degree=${degree}&dept=${department}`);
             const data = await response.json();
             setOptions(prev => ({ ...prev, batches: data }));
         } catch (error) {
@@ -211,7 +211,7 @@ const Analysis = () => {
     const fetchCourses = async (degree, department, batch) => {
         try {
             const response = await fetch(
-                `https://iqac-backend-0tj0.onrender.com/api/analysis/courses?degree=${degree}&dept=${department}&batch=${batch}`
+                `https://feedback-analysis-backend-5os5.onrender.com/api/analysis/courses?degree=${degree}&dept=${department}&batch=${batch}`
             );
             const data = await response.json();
             setOptions(prev => ({ ...prev, courses: data }));
@@ -226,7 +226,7 @@ const Analysis = () => {
             if (staffId && staffId.trim() !== '') {
                 params.append('staffId', staffId.trim());
             }
-            const response = await fetch(`https://iqac-backend-0tj0.onrender.com/api/analysis/faculty?${params.toString()}`);
+            const response = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/analysis/faculty?${params.toString()}`);
             const data = await response.json();
             if (Array.isArray(data)) setFaculty(data);
             else setFaculty([]);
@@ -252,7 +252,7 @@ const Analysis = () => {
                 });
                 
                 // Get analysis data
-                const analysisResponse = await fetch(`https://iqac-backend-0tj0.onrender.com/api/analysis/feedback?${params.toString()}`);
+                const analysisResponse = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/analysis/feedback?${params.toString()}`);
                 const analysisData = await analysisResponse.json();
                 
                 if (analysisData.success) {
@@ -264,7 +264,7 @@ const Analysis = () => {
             }
 
             // Generate consolidated report
-            const reportResponse = await fetch(`https://iqac-backend-0tj0.onrender.com/api/reports/generate-bulk-report`, {
+            const reportResponse = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/reports/generate-bulk-report`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -327,7 +327,7 @@ const Analysis = () => {
                 });
                 
                 // Get analysis data
-                const analysisResponse = await fetch(`https://iqac-backend-0tj0.onrender.com/api/analysis/feedback?${params.toString()}`);
+                const analysisResponse = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/analysis/feedback?${params.toString()}`);
                 const analysisData = await analysisResponse.json();
                 
                 if (analysisData.success) {
@@ -339,7 +339,7 @@ const Analysis = () => {
             }
 
             // Generate consolidated report
-            const reportResponse = await fetch(`https://iqac-backend-0tj0.onrender.com/api/bulk-reports/generate-bulk-report`, {
+            const reportResponse = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/bulk-reports/generate-bulk-report`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -396,7 +396,7 @@ const Analysis = () => {
                 staffId: facultyData.staff_id || facultyData.staffid || ''
             });
             
-            const response = await fetch(`https://iqac-backend-0tj0.onrender.com/api/analysis/feedback?${params.toString()}`);
+            const response = await fetch(`https://feedback-analysis-backend-5os5.onrender.com/api/analysis/feedback?${params.toString()}`);
             const data = await response.json();
             
             if (data.success) {
