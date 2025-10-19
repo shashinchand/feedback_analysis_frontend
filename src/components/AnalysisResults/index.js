@@ -36,12 +36,12 @@ const AnalysisResults = () => {
                 // Interpret option 1 as bad, 2 as neutral, 3 as good
                 question.options.forEach(option => {
                     // Map the values: 1 (bad) = 1, 2 (neutral) = 3, 3 (good) = 5
-                    const mappedValue = option.value === 1 ? 1 : option.value === 2 ? 3 : option.value === 3 ? 5 : option.value;
+                    const mappedValue = option.value === 1 ? 1 : option.value === 2 ? 2 : option.value === 3 ? 3 : option.value;
                     weightedSum += option.count * mappedValue;
                     totalResponses += option.count;
                 });
                 
-                const maxPossibleScore = totalResponses * 5; // Using 5-point scale
+                const maxPossibleScore = totalResponses * 3; // Using 5-point scale
                 const questionScore = maxPossibleScore > 0 
                     ? (weightedSum / maxPossibleScore) * 100 
                     : 0;
